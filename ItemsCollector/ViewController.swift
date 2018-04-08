@@ -8,18 +8,50 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var itemsTableView: UITableView!
+    
+    var itemsArray : [Item] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        itemsTableView.dataSource = self
+        itemsTableView.delegate = self
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    // to specify number of rows in the tableView
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return itemsArray.count
     }
-
+    
+    // to specify what each cell will contain
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        let item = itemsArray[indexPath.row]
+        cell.textLabel?.text = item.title
+        
+        //Setting image in each row
+        // Also converting the Binary data into UIImage
+        cell.imageView?.image = UIImage(data: item.image as! Data)
+        return cell
+    }
+    
+    // onResume
+    override func viewWillAppear(_ animated: Bool) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        // get all items in coreData
+        do{
+            itemsArray = try context.fetch(Item.fetchRequest())
+            // refresh the table
+            itemsTableView.reloadData()
+        }
+        catch{
+            
+        }
+    }
 
 }
 
