@@ -38,6 +38,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
+    // on table view item click
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = itemsArray[indexPath.row]
+        performSegue(withIdentifier: "itemSegue", sender: item)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let nectVC = segue.destination as! ItemViewController
+        nectVC.sentItem = sender as? Item
+    }
+    
     // onResume
     override func viewWillAppear(_ animated: Bool) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
